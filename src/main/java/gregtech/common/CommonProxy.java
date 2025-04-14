@@ -51,8 +51,6 @@ import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import gregtech.modules.GregTechModules;
 
-import me.oganesson.gregtech.common.ConfigExtension;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -73,6 +71,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import me.oganesson.gregtech.common.ConfigExtension;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
