@@ -51,6 +51,8 @@ import gregtech.loaders.recipe.CraftingComponent;
 import gregtech.loaders.recipe.GTRecipeManager;
 import gregtech.modules.GregTechModules;
 
+import me.oganesson.gregtech.common.ConfigExtension;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -405,7 +407,7 @@ public class CommonProxy {
     public void onPreLoad() {}
 
     public void onLoad() {
-        GTDataFixers.init();
+        if (ConfigExtension.enableDataFixer) GTDataFixers.init();
     }
 
     public void onPostLoad() {
