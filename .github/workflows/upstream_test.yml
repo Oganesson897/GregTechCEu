@@ -33,6 +33,6 @@ jobs:
           files: "build/libs/*.jar"
           fail_on_unmatched_files: true
           prerelease: true
-          tag_name: "${{ env.COMMIT_SHORT_SHA }}"
+          tag_name: "testing"
           name: "Test Building ${{ env.COMMIT_SHORT_SHA }}"
           body: "Testing GregTech CEu 2.9 Preview"
