@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>gregtech</groupId>
+  <artifactId>gregtech</artifactId>
+  <versioning>
+    <latest>2.9.0-oganesson</latest>
+    <release>2.9.0-oganesson</release>
+    <versions>
+      <version>2.9.0-oganesson</version>
+    </versions>
+    <lastUpdated>20250421105104</lastUpdated>
+  </versioning>
+</metadata>
