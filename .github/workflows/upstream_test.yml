@@ -2,6 +2,11 @@ on:
   push:
     branches:
       - sync/upstream/master
+  workflow_dispatch:
+      inputs:
+        branch:
+          description: 'branch'
+          default: 'sync/upstream/master'
   pull_request:
 
 
