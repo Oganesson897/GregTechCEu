@@ -27,8 +27,12 @@ jobs:
       - name: Build Project
         run: ./gradlew build --warning-mode all --build-cache
 
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v4.4.0
+      - name: Publish to GitHub
+        uses: softprops/action-gh-release@v2
         with:
-            name: ${{ env.COMMIT_SHORT_SHA }}
-            path: build/libs
+          files: "build/libs/*.jar"
+          fail_on_unmatched_files: true
+          prerelease: true
+          tag_name: "${{ env.COMMIT_SHORT_SHA }}"
+          name: "Test Building ${{ env.COMMIT_SHORT_SHA }}"
+          body: "Testing GregTech CEu 2.9 Preview"
