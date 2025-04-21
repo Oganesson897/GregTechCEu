@@ -27,12 +27,20 @@ jobs:
       - name: Build Project
         run: ./gradlew build --warning-mode all --build-cache
 
-      - name: Publish to GitHub
-        uses: softprops/action-gh-release@v2
+      - name: Upload Default Jar
+        uses: actions/upload-artifact@v4.4.0
         with:
-          files: "build/libs/*.jar"
-          fail_on_unmatched_files: true
-          prerelease: true
-          tag_name: "testing"
-          name: "Test Building ${{ env.COMMIT_SHORT_SHA }}"
-          body: "Testing GregTech CEu 2.9 Preview"
+            name: default jar
+            path: build/libs/*-oganesson.jar
+
+      - name: Upload Sources Jar
+        uses: actions/upload-artifact@v4.4.0
+        with:
+            name: sources jar
+            path: build/libs/*-sources.jar
+
+      - name: Upload Dev Jar
+        uses: actions/upload-artifact@v4.4.0
+        with:
+            name: dev jar
+            path: build/libs/*-dev.jar
