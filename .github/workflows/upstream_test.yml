@@ -27,20 +27,14 @@ jobs:
       - name: Build Project
         run: ./gradlew build --warning-mode all --build-cache
 
+      - name: Package Artifacts
+        shell: bash
+        run: |
+          zip -r build/artifacts.zip build/libs/
+          
+
       - name: Upload Default Jar
         uses: actions/upload-artifact@v4.4.0
         with:
-            name: default jar
-            path: build/libs/*-oganesson.jar
-
-      - name: Upload Sources Jar
-        uses: actions/upload-artifact@v4.4.0
-        with:
-            name: sources jar
-            path: build/libs/*-sources.jar
-
-      - name: Upload Dev Jar
-        uses: actions/upload-artifact@v4.4.0
-        with:
-            name: dev jar
-            path: build/libs/*-dev.jar
+            name: ${{ env.COMMIT_SHORT_SHA }}
+            path: build/artifacts.zip
