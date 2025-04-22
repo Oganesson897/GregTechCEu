@@ -3,11 +3,11 @@
   <groupId>gregtech</groupId>
   <artifactId>gregtech</artifactId>
   <versioning>
-    <latest>2.9.0-oganesson</latest>
-    <release>2.9.0-oganesson</release>
+    <latest>2.9.1-oganesson</latest>
+    <release>2.9.1-oganesson</release>
     <versions>
-      <version>2.9.0-oganesson</version>
+      <version>2.9.1-oganesson</version>
     </versions>
-    <lastUpdated>20250421105104</lastUpdated>
+    <lastUpdated>20250422130858</lastUpdated>
   </versioning>
 </metadata>

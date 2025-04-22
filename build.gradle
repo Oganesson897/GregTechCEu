@@ -171,6 +171,22 @@ if (coreModClass) {
     }
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'gregtech'
+            artifactId = 'gregtech'
+            version = modVersion
+
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = getFile('maven').path
+        }
+    }
+}
 
 // Plugin application
 
@@ -1322,39 +1338,6 @@ def addModrinthDep(String scope, String type, String name) {
             throw new Exception('Invalid modrinth dependency type: ' + type)
     }
     project.modrinth.dependencies.add(dep)
-}
-
-if (customMavenPublishUrl) {
-    String publishedVersion = modVersion
-
-    publishing {
-        publications {
-            create('maven', MavenPublication) {
-                //noinspection GroovyAssignabilityCheck
-                from components.java
-
-                if (apiPackage) {
-                    artifact apiJar
-                }
-
-                // providers is not available here, use System for getting env vars
-                groupId = System.getenv('ARTIFACT_GROUP_ID') ?: project.mavenArtifactGroup
-                artifactId = System.getenv('ARTIFACT_ID') ?: project.modArchivesBaseName
-                version = System.getenv('RELEASE_VERSION') ?: publishedVersion
-            }
-        }
-
-        repositories {
-            maven {
-                url = customMavenPublishUrl
-                allowInsecureProtocol = !customMavenPublishUrl.startsWith('https')
-                credentials {
-                    username = providers.environmentVariable('MAVEN_USER').getOrElse('NONE')
-                    password = providers.environmentVariable('MAVEN_PASSWORD').getOrElse('NONE')
-                }
-            }
-        }
-    }
 }
 
 def getSecondaryArtifacts() {

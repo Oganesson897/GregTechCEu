@@ -1,0 +1,289 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "gregtech",
+    "module": "gregtech",
+    "version": "2.9.1-oganesson",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.9"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "com.gtnewhorizons.retrofuturagradle.obfuscation": "mcp",
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "zone.rong",
+          "module": "mixinbooter",
+          "version": {
+            "requires": "9.1"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "codechicken",
+          "module": "codechickenlib",
+          "version": {
+            "requires": "3.2.3.358"
+          }
+        },
+        {
+          "group": "com.cleanroommc",
+          "module": "modularui",
+          "version": {
+            "requires": "2.5.0-rc4"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "com.cleanroommc",
+          "module": "groovyscript",
+          "version": {
+            "requires": "1.2.0-hotfix1"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "curse.maven",
+          "module": "inventory-bogosorter-632327",
+          "version": {
+            "requires": "4951607-deobf-4951608-sources-4951609"
+          }
+        },
+        {
+          "group": "CraftTweaker2",
+          "module": "CraftTweaker2-MC1120-Main",
+          "version": {
+            "requires": "1.12-4.1.20.700"
+          }
+        },
+        {
+          "group": "appeng",
+          "module": "ae2-uel",
+          "version": {
+            "requires": "v0.56.4"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "curse.maven",
+          "module": "ctm-267602",
+          "version": {
+            "requires": "2915363"
+          }
+        },
+        {
+          "group": "org.jetbrains",
+          "module": "annotations",
+          "version": {
+            "requires": "24.1.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "gregtech-2.9.1-oganesson-dev.jar",
+          "url": "gregtech-2.9.1-oganesson-dev.jar",
+          "size": 13784130,
+          "sha512": "392da4309efa895142354fea3cc5d82b70aa7a92c26812a904f23623c77a0c67e64c01b04010a64183dc440277e747c27f71259b047b26715ef03e15c76f7e37",
+          "sha256": "a25049cee1fc988f13037240bcc1cbaa26d17e48276c90e87d8fd7da0125e635",
+          "sha1": "516abdfcb7ed3d5b63faf9cd128aeaf91f3825cf",
+          "md5": "e8935548da3fe88a4c1240ed9a555580"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "com.gtnewhorizons.retrofuturagradle.obfuscation": "mcp",
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "mezz.jei",
+          "module": "jei_1.12.2",
+          "version": {
+            "requires": "4.16.1.302"
+          }
+        },
+        {
+          "group": "curse.maven",
+          "module": "top-245211",
+          "version": {
+            "requires": "2667280"
+          }
+        },
+        {
+          "group": "zone.rong",
+          "module": "mixinbooter",
+          "version": {
+            "requires": "9.1"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "codechicken",
+          "module": "codechickenlib",
+          "version": {
+            "requires": "3.2.3.358"
+          }
+        },
+        {
+          "group": "com.cleanroommc",
+          "module": "modularui",
+          "version": {
+            "requires": "2.5.0-rc4"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "com.cleanroommc",
+          "module": "groovyscript",
+          "version": {
+            "requires": "1.2.0-hotfix1"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "curse.maven",
+          "module": "inventory-bogosorter-632327",
+          "version": {
+            "requires": "4951607-deobf-4951608-sources-4951609"
+          }
+        },
+        {
+          "group": "CraftTweaker2",
+          "module": "CraftTweaker2-MC1120-Main",
+          "version": {
+            "requires": "1.12-4.1.20.700"
+          }
+        },
+        {
+          "group": "appeng",
+          "module": "ae2-uel",
+          "version": {
+            "requires": "v0.56.4"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        },
+        {
+          "group": "curse.maven",
+          "module": "ctm-267602",
+          "version": {
+            "requires": "2915363"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "gregtech-2.9.1-oganesson-dev.jar",
+          "url": "gregtech-2.9.1-oganesson-dev.jar",
+          "size": 13784130,
+          "sha512": "392da4309efa895142354fea3cc5d82b70aa7a92c26812a904f23623c77a0c67e64c01b04010a64183dc440277e747c27f71259b047b26715ef03e15c76f7e37",
+          "sha256": "a25049cee1fc988f13037240bcc1cbaa26d17e48276c90e87d8fd7da0125e635",
+          "sha1": "516abdfcb7ed3d5b63faf9cd128aeaf91f3825cf",
+          "md5": "e8935548da3fe88a4c1240ed9a555580"
+        }
+      ]
+    },
+    {
+      "name": "reobfElements",
+      "attributes": {
+        "com.gtnewhorizons.retrofuturagradle.obfuscation": "srg",
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "gregtech-2.9.1-oganesson.jar",
+          "url": "gregtech-2.9.1-oganesson.jar",
+          "size": 13889697,
+          "sha512": "c7f0a6bbc3ff1a346f425291862cdabd60458f6921d123749b6cd03d6f33e0693c3ac8be52ef062d17bcecec24a9746e2b1f818ab11a64570f002d2a6f48dde6",
+          "sha256": "650306c595fdc7b0e1a5e4e824da1898784f37293b6e80d3b29e73b88cf8bba4",
+          "sha1": "4b4ead4aca56ad5cbf204fbc6610ad698bd1afb3",
+          "md5": "e80c872e21dd85af8d68e9b6ebed2d60"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "com.gtnewhorizons.retrofuturagradle.obfuscation": "mcp",
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "gregtech-2.9.1-oganesson-sources.jar",
+          "url": "gregtech-2.9.1-oganesson-sources.jar",
+          "size": 11216389,
+          "sha512": "b0016c483abc9fc9ea1effb988a535ce18ecb6fb4f37d361112ceb0f4ce071d918b5dc419c4956a09956f9d5e466cca63310295d0952c3b7a85c4405a118a416",
+          "sha256": "0a9b8780672e8b12fba7bc0a58f9c34a21a21656789fedfca90f29cdabaeea92",
+          "sha1": "e6efdf26d618d33e23883a9270223824b90025b5",
+          "md5": "3ffde615cd81318b2393f7bf2d4c5054"
+        }
+      ]
+    }
+  ]
+}
