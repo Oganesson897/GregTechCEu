@@ -60,6 +60,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiablePart implements
@@ -188,8 +189,10 @@ public class MetaTileEntityDualHatch extends MetaTileEntityMultiblockNotifiableP
     }
 
     @Override
-    public @Nullable MultiblockAbility<IItemHandlerModifiable> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_ITEMS : MultiblockAbility.IMPORT_ITEMS;
+    public @NotNull List<MultiblockAbility<?>> getAbilities() {
+        return isExportHatch ?
+                Arrays.asList(MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.EXPORT_ITEMS) :
+                Arrays.asList(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS);
     }
 
     @Override
