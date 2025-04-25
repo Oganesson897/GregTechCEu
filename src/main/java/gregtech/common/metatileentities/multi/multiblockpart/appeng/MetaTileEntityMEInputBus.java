@@ -5,7 +5,6 @@ import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IDataStickIntractable;
 import gregtech.api.capability.IGhostSlotConfigurable;
-import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -15,9 +14,9 @@ import gregtech.api.gui.widgets.GhostCircuitSlotWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.common.gui.widget.appeng.AEItemConfigWidget;
@@ -37,7 +36,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import appeng.api.config.Actionable;
@@ -158,27 +156,6 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     @Override
     public MetaTileEntity createMetaTileEntity(IGregTechTileEntity iGregTechTileEntity) {
         return new MetaTileEntityMEInputBus(metaTileEntityId);
-    }
-
-    @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
-        super.addToMultiBlock(controllerBase);
-        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
-            if (handler instanceof INotifiableHandler notifiable) {
-                notifiable.addNotifiableMetaTileEntity(controllerBase);
-                notifiable.addToNotifiedList(this, handler, false);
-            }
-        }
-    }
-
-    @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
-        super.removeFromMultiBlock(controllerBase);
-        for (IItemHandler handler : this.actualImportItems.getBackingHandlers()) {
-            if (handler instanceof INotifiableHandler notifiable) {
-                notifiable.removeNotifiableMetaTileEntity(controllerBase);
-            }
-        }
     }
 
     @Override
@@ -329,8 +306,8 @@ public class MetaTileEntityMEInputBus extends MetaTileEntityAEHostablePart<IAEIt
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> list) {
-        list.add(this.actualImportItems);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(this.actualImportItems);
     }
 
     @Override

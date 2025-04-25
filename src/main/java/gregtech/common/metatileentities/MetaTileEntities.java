@@ -296,6 +296,9 @@ public class MetaTileEntities {
 
     public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[4][GTValues.V.length];
 
+    public static MetaTileEntityDualHatch[] DUAL_INPUT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1];
+    public static MetaTileEntityDualHatch[] DUAL_OUTPUT_HATCH = new MetaTileEntityDualHatch[GTValues.V.length - 1];
+
     //spotless:on
 
     public static void init() {
@@ -1103,6 +1106,20 @@ public class MetaTileEntities {
                     new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x." + tierName), i, 9, true));
         }
 
+        // Dual Input Hatches
+        for (int tier = GTValues.ULV; tier <= (GregTechAPI.isHighTier() ? GTValues.OpV : GTValues.UHV); tier++) {
+            String voltageName = GTValues.VN[tier].toLowerCase();
+            DUAL_INPUT_HATCH[tier] = registerMetaTileEntity(1900 + tier, new MetaTileEntityDualHatch(
+                    gregtechId(String.format("%s.%s", "dual_input_hatch", voltageName)), tier, false));
+        }
+
+        // Dual Output Hatches
+        for (int tier = GTValues.ULV; tier <= (GregTechAPI.isHighTier() ? GTValues.OpV : GTValues.UHV); tier++) {
+            String voltageName = GTValues.VN[tier].toLowerCase();
+            DUAL_INPUT_HATCH[tier] = registerMetaTileEntity(1950 + tier, new MetaTileEntityDualHatch(
+                    gregtechId(String.format("%s.%s", "dual_output_hatch", voltageName)), tier, true));
+        }
+
         /*
          * FOR ADDON DEVELOPERS:
          *
@@ -1179,8 +1196,9 @@ public class MetaTileEntities {
     }
 
     public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
-        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart abilityPart) {
-            MultiblockAbility.registerMultiblockAbility(abilityPart.getAbility(), sampleMetaTileEntity);
+        if (sampleMetaTileEntity instanceof IMultiblockAbilityPart<?>abilityPart) {
+            for (var ability : abilityPart.getAbilities())
+                MultiblockAbility.registerMultiblockAbility(ability, sampleMetaTileEntity);
         }
         if (sampleMetaTileEntity instanceof MultiblockControllerBase && Mods.JustEnoughItems.isModLoaded()) {
             if (((MultiblockControllerBase) sampleMetaTileEntity).shouldShowInJei()) {

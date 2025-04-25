@@ -8,6 +8,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -197,8 +198,8 @@ public class MetaTileEntityMEOutputHatch extends MetaTileEntityAEHostablePart<IA
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> list) {
-        list.add(new InaccessibleInfiniteTank(this, this.internalBuffer, this.getController()));
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(new InaccessibleInfiniteTank(this, this.internalBuffer, this.getController()));
     }
 
     @Override

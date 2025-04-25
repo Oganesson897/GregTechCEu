@@ -1,29 +1,44 @@
 package gregtech.common.metatileentities.multi.multiblockpart;
 
-import gregtech.api.capability.*;
+import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IFilter;
+import gregtech.api.capability.IFilteredFluidContainer;
+import gregtech.api.capability.IGhostSlotConfigurable;
 import gregtech.api.capability.impl.FilteredItemHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.GhostCircuitItemStackHandler;
 import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.ModularUI.Builder;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
+import gregtech.api.gui.widgets.FluidContainerSlotWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.PhantomTankWidget;
+import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -38,31 +53,61 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import com.cleanroommc.modularui.network.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart
-                                      implements IMultiblockAbilityPart<IFluidTank>, IControllable {
+                                      implements IMultiblockAbilityPart<IFluidTank>, IControllable,
+                                      IGhostSlotConfigurable {
 
-    private static final int INITIAL_INVENTORY_SIZE = 8000;
+    public static final int INITIAL_INVENTORY_SIZE = 8000;
 
     // only holding this for convenience
-    private final HatchFluidTank fluidTank;
-    private boolean workingEnabled;
+    protected final HatchFluidTank fluidTank;
+    protected boolean workingEnabled;
+    private GhostCircuitItemStackHandler circuitInventory;
 
     // export hatch-only fields
-    private boolean locked;
+    protected boolean locked;
     @Nullable
-    private FluidStack lockedFluid;
+    protected FluidStack lockedFluid;
 
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier, isExportHatch);
         this.fluidTank = new HatchFluidTank(getInventorySize(), this, isExportHatch);
+        initializeInventory(); // the fact that this has to be called three times is so dumb
         this.workingEnabled = true;
-        initializeInventory();
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        if (this.hasGhostCircuitInventory()) {
+            this.circuitInventory = new GhostCircuitItemStackHandler(this);
+            this.circuitInventory.addNotifiableMetaTileEntity(this);
+        }
+    }
+
+    @Override
+    public boolean hasGhostCircuitInventory() {
+        return !isExportHatch;
+    }
+
+    @Override
+    public void setGhostCircuitConfig(int config) {
+        if (this.circuitInventory == null || this.circuitInventory.getCircuitValue() == config) {
+            return;
+        }
+        this.circuitInventory.setCircuitValue(config);
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
     }
 
     @Override
@@ -79,6 +124,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (locked && lockedFluid != null) {
                 data.setTag("LockedFluid", lockedFluid.writeToNBT(new NBTTagCompound()));
             }
+        } else {
+            this.circuitInventory.write(data);
         }
         return data;
     }
@@ -97,6 +144,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             this.locked = data.getBoolean("IsLocked");
             this.lockedFluid = this.locked ? FluidStack.loadFluidStackFromNBT(data.getCompoundTag("LockedFluid")) :
                     null;
+        } else {
+            this.circuitInventory.read(data);
         }
     }
 
@@ -144,6 +193,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         buf.writeBoolean(workingEnabled);
         if (isExportHatch) {
             buf.writeBoolean(locked);
+        } else {
+            buf.writeVarInt(this.circuitInventory.getCircuitValue());
         }
     }
 
@@ -153,6 +204,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         this.workingEnabled = buf.readBoolean();
         if (isExportHatch) {
             this.locked = buf.readBoolean();
+        } else {
+            setGhostCircuitConfig(buf.readVarInt());
         }
     }
 
@@ -161,6 +214,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         super.receiveCustomData(dataId, buf);
         if (dataId == GregtechDataCodes.WORKING_ENABLED) {
             this.workingEnabled = buf.readBoolean();
+        } else if (dataId == GregtechDataCodes.LOCK_FILL) {
+            this.lockedFluid = NetworkUtils.readFluidStack(buf);
         }
     }
 
@@ -176,8 +231,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         }
     }
 
-    private int getInventorySize() {
-        return INITIAL_INVENTORY_SIZE * (1 << Math.min(9, getTier()));
+    protected int getInventorySize() {
+        return INITIAL_INVENTORY_SIZE * Math.min(Integer.MAX_VALUE, 1 << getTier());
     }
 
     @Override
@@ -202,13 +257,20 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     @Override
-    public MultiblockAbility<IFluidTank> getAbility() {
-        return isExportHatch ? MultiblockAbility.EXPORT_FLUIDS : MultiblockAbility.IMPORT_FLUIDS;
+    public @NotNull List<MultiblockAbility<?>> getAbilities() {
+        return isExportHatch ?
+                Collections.singletonList(MultiblockAbility.EXPORT_FLUIDS) :
+                Arrays.asList(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS);
     }
 
     @Override
-    public void registerAbilities(List<IFluidTank> abilityList) {
-        abilityList.add(fluidTank);
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        if (abilityInstances.isKey(MultiblockAbility.EXPORT_FLUIDS) ||
+                abilityInstances.isKey(MultiblockAbility.IMPORT_FLUIDS)) {
+            abilityInstances.add(this.fluidTank);
+        } else if (abilityInstances.isKey(MultiblockAbility.IMPORT_ITEMS)) {
+            abilityInstances.add(this.circuitInventory);
+        }
     }
 
     @Override
@@ -218,7 +280,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
 
     public ModularUI.Builder createTankUI(IFluidTank fluidTank, String title, EntityPlayer entityPlayer) {
         // Create base builder/widget references
-        Builder builder = ModularUI.defaultBuilder();
+        ModularUI.Builder builder = ModularUI.defaultBuilder();
         TankWidget tankWidget;
 
         // Add input/output-specific widgets
@@ -324,11 +386,10 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
     }
 
     private void setLocked(boolean locked) {
-        if (this.locked == locked) return;
+        if (!isExportHatch || this.locked == locked) return;
         this.locked = locked;
-        if (!getWorld().isRemote) {
-            markDirty();
-        }
+
+        if (!getWorld().isRemote) markDirty();
         if (locked && fluidTank.getFluid() != null) {
             this.lockedFluid = fluidTank.getFluid().copy();
             this.lockedFluid.amount = 1;
@@ -339,7 +400,22 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         fluidTank.onContentsChanged();
     }
 
-    private class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
+    @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
+        if (this == MetaTileEntities.FLUID_IMPORT_HATCH[0]) {
+            for (var hatch : MetaTileEntities.FLUID_IMPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+            for (var hatch : MetaTileEntities.FLUID_EXPORT_HATCH) {
+                if (hatch != null) subItems.add(hatch.getStackForm());
+            }
+        } else if (this.getClass() != MetaTileEntityFluidHatch.class) {
+            // let subclasses fall through this override
+            super.getSubItems(creativeTab, subItems);
+        }
+    }
+
+    protected class HatchFluidTank extends NotifiableFluidTank implements IFilteredFluidContainer, IFilter<FluidStack> {
 
         public HatchFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
             super(capacity, entityToNotify, isExport);
@@ -352,6 +428,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
             if (doFill && locked && lockedFluid == null) {
                 lockedFluid = resource.copy();
                 lockedFluid.amount = 1;
+                writeCustomData(GregtechDataCodes.LOCK_FILL,
+                        buffer -> NetworkUtils.writeFluidStack(buffer, lockedFluid));
             }
             return accepted;
         }

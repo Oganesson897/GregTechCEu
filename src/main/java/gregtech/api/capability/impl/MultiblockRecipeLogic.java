@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultiblockController;
+import gregtech.api.capability.IMultipleNotifiableHandler;
 import gregtech.api.capability.IMultipleRecipeMaps;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -103,6 +104,21 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         return controller.getInputFluidInventory();
     }
 
+    /**
+     * Overload of {@link #getInputTank()} to gather extra fluid tanks
+     * that could exist in a distinct item handler (such as a {@link DualHandler})
+     *
+     * @param items Handler to gather fluid tanks from
+     * @return a new FluidTankList with extra fluid tanks on top of the existing fluid tanks
+     */
+    protected IMultipleTankHandler getInputTank(IItemHandler items) {
+        var tanks = new ArrayList<>(getInputTank().getFluidTanks());
+        if (items instanceof IMultipleTankHandler tankHandler) {
+            tanks.addAll(tankHandler.getFluidTanks());
+        }
+        return new FluidTankList(getInputTank().allowSameFluidFill(), tanks);
+    }
+
     @Override
     protected IMultipleTankHandler getOutputTank() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
@@ -134,9 +150,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                         Iterator<IItemHandlerModifiable> invalidatedIter = invalidatedInputList.iterator();
                         while (invalidatedIter.hasNext()) {
                             IItemHandler invalidatedHandler = invalidatedIter.next();
-                            if (invalidatedHandler instanceof ItemHandlerList) {
-                                for (IItemHandler ih : ((ItemHandlerList) invalidatedHandler).getBackingHandlers()) {
-                                    if (ih == bus) {
+                            if (invalidatedHandler instanceof IMultipleNotifiableHandler multipleNotifiableHandler) {
+                                for (var notifiableHandler : multipleNotifiableHandler.getBackingNotifiers()) {
+                                    if (notifiableHandler == bus) {
                                         canWork = true;
                                         invalidatedIter.remove();
                                         break;
@@ -227,7 +243,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 continue;
             }
             // Look for a new recipe after a cache miss
-            currentRecipe = findRecipe(maxVoltage, bus, importFluids);
+            currentRecipe = findRecipe(maxVoltage, bus, getInputTank(bus));
             // Cache the current recipe, if one is found
             if (currentRecipe != null && checkRecipe(currentRecipe)) {
                 this.previousRecipe = currentRecipe;
@@ -257,7 +273,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     protected boolean checkPreviousRecipeDistinct(IItemHandlerModifiable previousBus) {
-        return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank());
+        return previousRecipe != null && previousRecipe.matches(false, previousBus, getInputTank(previousBus));
     }
 
     protected boolean prepareRecipeDistinct(Recipe recipe) {
@@ -267,17 +283,19 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         recipe = findParallelRecipe(
                 recipe,
                 currentDistinctInputBus,
-                getInputTank(),
+                getInputTank(currentDistinctInputBus),
                 getOutputInventory(),
                 getOutputTank(),
                 getMaxParallelVoltage(),
                 getParallelLimit());
 
-        if (recipe != null && setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus)) {
-            setupRecipe(recipe);
-            return true;
+        if (recipe != null) {
+            if (setupAndConsumeRecipeInputs(recipe, currentDistinctInputBus,
+                    getInputTank(currentDistinctInputBus))) {
+                setupRecipe(recipe);
+                return true;
+            }
         }
-
         return false;
     }
 

@@ -13,10 +13,10 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.itemhandlers.GTItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.util.GTHashMaps;
+import gregtech.api.util.GTUtility;
 import gregtech.client.renderer.texture.Textures;
 import gregtech.client.renderer.texture.cube.SimpleOverlayRenderer;
 
@@ -31,18 +31,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -86,31 +83,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void addToMultiBlock(MultiblockControllerBase controllerBase) {
-        super.addToMultiBlock(controllerBase);
-        if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
-            for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
-                if (handler instanceof INotifiableHandler notifiable) {
-                    notifiable.addNotifiableMetaTileEntity(controllerBase);
-                    notifiable.addToNotifiedList(this, handler, isExportHatch);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
-        super.removeFromMultiBlock(controllerBase);
-        if (hasGhostCircuitInventory() && this.actualImportItems instanceof ItemHandlerList) {
-            for (IItemHandler handler : ((ItemHandlerList) this.actualImportItems).getBackingHandlers()) {
-                if (handler instanceof INotifiableHandler notifiable) {
-                    notifiable.removeNotifiableMetaTileEntity(controllerBase);
-                }
-            }
-        }
-    }
-
-    @Override
     public void update() {
         super.update();
         if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
@@ -128,7 +100,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
                 IItemHandlerModifiable inventory = (isExportHatch ? this.getExportItems() : super.getImportItems());
                 if (isExportHatch ? this.getNotifiedItemOutputList().contains(inventory) :
                         this.getNotifiedItemInputList().contains(inventory)) {
-                    collapseInventorySlotContents(inventory);
+                    GTUtility.collapseInventorySlotContents(inventory);
                 }
             }
         }
@@ -240,11 +212,11 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
         if (this.hasGhostCircuitInventory() && this.actualImportItems != null) {
-            abilityList.add(isExportHatch ? this.exportItems : this.actualImportItems);
+            abilityInstances.add(isExportHatch ? this.exportItems : this.actualImportItems);
         } else {
-            abilityList.add(isExportHatch ? this.exportItems : this.importItems);
+            abilityInstances.add(isExportHatch ? this.exportItems : this.importItems);
         }
     }
 
@@ -309,44 +281,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePar
         }
 
         widget.setTooltipText("gregtech.gui.configurator_slot.tooltip", configString);
-    }
-
-    private static void collapseInventorySlotContents(IItemHandlerModifiable inventory) {
-        // Gather a snapshot of the provided inventory
-        Object2IntMap<ItemStack> inventoryContents = GTHashMaps.fromItemHandler(inventory, true);
-
-        List<ItemStack> inventoryItemContents = new ArrayList<>();
-
-        // Populate the list of item stacks in the inventory with apportioned item stacks, for easy replacement
-        for (Object2IntMap.Entry<ItemStack> e : inventoryContents.object2IntEntrySet()) {
-            ItemStack stack = e.getKey();
-            int count = e.getIntValue();
-            int maxStackSize = stack.getMaxStackSize();
-            while (count >= maxStackSize) {
-                ItemStack copy = stack.copy();
-                copy.setCount(maxStackSize);
-                inventoryItemContents.add(copy);
-                count -= maxStackSize;
-            }
-            if (count > 0) {
-                ItemStack copy = stack.copy();
-                copy.setCount(count);
-                inventoryItemContents.add(copy);
-            }
-        }
-
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            ItemStack stackToMove;
-            // Ensure that we are not exceeding the List size when attempting to populate items
-            if (i >= inventoryItemContents.size()) {
-                stackToMove = ItemStack.EMPTY;
-            } else {
-                stackToMove = inventoryItemContents.get(i);
-            }
-
-            // Populate the slots
-            inventory.setStackInSlot(i, stackToMove);
-        }
     }
 
     @Override

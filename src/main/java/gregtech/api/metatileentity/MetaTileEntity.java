@@ -12,7 +12,6 @@ import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.cover.Cover;
 import gregtech.api.cover.CoverHolder;
 import gregtech.api.cover.CoverRayTracer;
@@ -40,6 +39,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -99,6 +99,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -147,6 +148,9 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
 
     private int playSoundCooldown = 0;
     private int lastTick = 0;
+
+    @Nullable
+    private UUID owner = null;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -362,26 +366,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
         return getMetaName() + ".name";
     }
 
-    public <T> void addNotifiedInput(T input) {
+    public void addNotifiedInput(Object input) {
         if (input instanceof IItemHandlerModifiable) {
             if (!notifiedItemInputList.contains(input)) {
                 this.notifiedItemInputList.add((IItemHandlerModifiable) input);
             }
-        } else if (input instanceof IFluidHandler) {
+        }
+        if (input instanceof IFluidHandler) {
             if (!notifiedFluidInputList.contains(input)) {
                 this.notifiedFluidInputList.add((IFluidHandler) input);
             }
         }
     }
 
-    public <T> void addNotifiedOutput(T output) {
+    public void addNotifiedOutput(Object output) {
         if (output instanceof IItemHandlerModifiable) {
             if (!notifiedItemOutputList.contains(output)) {
                 this.notifiedItemOutputList.add((IItemHandlerModifiable) output);
             }
-        } else if (output instanceof NotifiableFluidTank) {
+        }
+        if (output instanceof IFluidHandler) {
             if (!notifiedFluidOutputList.contains(output)) {
-                this.notifiedFluidOutputList.add((NotifiableFluidTank) output);
+                this.notifiedFluidOutputList.add((IFluidHandler) output);
             }
         }
     }
@@ -1295,12 +1301,28 @@ public abstract class MetaTileEntity implements ISyncedTileEntity, CoverHolder, 
     }
 
     /**
-     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy}
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner by UUID
      * <p>
      * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
      * this should be manually called immediately afterwards
      */
-    public void onPlacement() {}
+    public void onPlacement(@Nullable EntityLivingBase placer) {
+        if (placer instanceof EntityPlayer player) {
+            this.owner = player.getUniqueID();
+        }
+    }
+
+    /**
+     * Called whenever a MetaTileEntity is placed in world by {@link Block#onBlockPlacedBy},
+     * gives the MetaTileEntity an Owner of Null
+     * <p>
+     * If placing an MTE with methods such as {@link World#setBlockState(BlockPos, IBlockState)},
+     * this should be manually called immediately afterwards
+     */
+    public final void onPlacement() {
+        onPlacement(null);
+    }
 
     /**
      * Called from breakBlock right before meta tile entity destruction

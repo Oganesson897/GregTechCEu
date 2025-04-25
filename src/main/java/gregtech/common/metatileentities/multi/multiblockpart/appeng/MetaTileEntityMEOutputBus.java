@@ -8,6 +8,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.interfaces.IGregTechTileEntity;
+import gregtech.api.metatileentity.multiblock.AbilityInstances;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -195,8 +196,8 @@ public class MetaTileEntityMEOutputBus extends MetaTileEntityAEHostablePart<IAEI
     }
 
     @Override
-    public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
-        abilityList.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
+    public void registerAbilities(@NotNull AbilityInstances abilityInstances) {
+        abilityInstances.add(new InaccessibleInfiniteSlot(this, this.internalBuffer, this.getController()));
     }
 
     @Override

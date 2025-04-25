@@ -85,7 +85,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         }
 
         @Override
-        protected void onContentsChanged(int slot) {
+        public void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
             recheckUnlockItemsAndUnlock();
         }
