@@ -35,9 +35,5 @@ public interface IMultiblockAbilityPart<T> extends IMultiblockPart {
      *
      * @param abilityInstances list to register abilities to
      */
-    default void registerAbilities(@NotNull AbilityInstances abilityInstances) {
-        registerAbilities(abilityInstances.cast());
-    };
-
-    void registerAbilities(@NotNull List<T> list);
+    void registerAbilities(@NotNull AbilityInstances abilityInstances);
 }
