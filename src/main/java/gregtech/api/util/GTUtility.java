@@ -19,6 +19,7 @@ import gregtech.api.metatileentity.registry.MTERegistry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.ItemAndMetadata;
 
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.BlockSnow;
@@ -61,6 +62,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -958,5 +960,27 @@ public class GTUtility {
 
         // Sanity check to make sure we don't accidentally create full-amp recipes.
         return Math.min(voltage, GTValues.VA[workingTier]);
+    }
+
+    public static int combineRGB(@Range(from = 0, to = 255) int r, @Range(from = 0, to = 255) int g,
+                                 @Range(from = 0, to = 255) int b) {
+        return (r << 16) | (g << 8) | b;
+    }
+
+    /**
+     * @param map the map to get from
+     * @param key the key to retrieve with
+     * @return value corresponding to the given key or its wildcard counterpart
+     */
+    public static <T> @Nullable T getOrWildcardMeta(@NotNull Map<ItemAndMetadata, T> map,
+                                                    @NotNull ItemAndMetadata key) {
+        T t = map.get(key);
+        if (t != null) {
+            return t;
+        }
+        if (key.isWildcard()) {
+            return null;
+        }
+        return map.get(key.toWildcard());
     }
 }
