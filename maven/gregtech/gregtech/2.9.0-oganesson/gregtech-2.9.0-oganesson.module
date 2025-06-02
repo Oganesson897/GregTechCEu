@@ -29,7 +29,7 @@
           "group": "zone.rong",
           "module": "mixinbooter",
           "version": {
-            "requires": "9.1"
+            "requires": "10.6"
           },
           "excludes": [
             {
@@ -117,11 +117,11 @@
         {
           "name": "gregtech-2.9.0-oganesson-dev.jar",
           "url": "gregtech-2.9.0-oganesson-dev.jar",
-          "size": 13772618,
-          "sha512": "6f3e2d8d619b62b7b14a0ad86ed8055732e19487c0fe5b2c4713e8b7c0b782d4c1d0738d029a4036c1cbedfa243a2327fc48ca8ba45d57da509f7f8b4167cf54",
-          "sha256": "07423ec78923bed407824e20f68e633282dcdbe06590548c866a051d1e63831a",
-          "sha1": "8154f684b467ab463c8fc4cb418e6425487ccc1f",
-          "md5": "a1e4e66ca9bb18a10e5cf9058609f69d"
+          "size": 13760875,
+          "sha512": "cded95e2599f3294e72da9f869c7faef48b7a42452b31aebbc0db33d33aba036cd3f0274ccc11473d0f805d44d66f3575ff5e78b1e787903086457a536b164fc",
+          "sha256": "aa0a07d6139d785da2875e7d3b3e2c6faf79594a75f7758586c1addb8cedb147",
+          "sha1": "b182c4e7c4c065ef33fc462cd35a5696a3c7a237",
+          "md5": "5af0604bfc7831434d65f5858279759a"
         }
       ]
     },
@@ -154,7 +154,7 @@
           "group": "zone.rong",
           "module": "mixinbooter",
           "version": {
-            "requires": "9.1"
+            "requires": "10.6"
           },
           "excludes": [
             {
@@ -235,11 +235,11 @@
         {
           "name": "gregtech-2.9.0-oganesson-dev.jar",
           "url": "gregtech-2.9.0-oganesson-dev.jar",
-          "size": 13772618,
-          "sha512": "6f3e2d8d619b62b7b14a0ad86ed8055732e19487c0fe5b2c4713e8b7c0b782d4c1d0738d029a4036c1cbedfa243a2327fc48ca8ba45d57da509f7f8b4167cf54",
-          "sha256": "07423ec78923bed407824e20f68e633282dcdbe06590548c866a051d1e63831a",
-          "sha1": "8154f684b467ab463c8fc4cb418e6425487ccc1f",
-          "md5": "a1e4e66ca9bb18a10e5cf9058609f69d"
+          "size": 13760875,
+          "sha512": "cded95e2599f3294e72da9f869c7faef48b7a42452b31aebbc0db33d33aba036cd3f0274ccc11473d0f805d44d66f3575ff5e78b1e787903086457a536b164fc",
+          "sha256": "aa0a07d6139d785da2875e7d3b3e2c6faf79594a75f7758586c1addb8cedb147",
+          "sha1": "b182c4e7c4c065ef33fc462cd35a5696a3c7a237",
+          "md5": "5af0604bfc7831434d65f5858279759a"
         }
       ]
     },
@@ -256,11 +256,11 @@
         {
           "name": "gregtech-2.9.0-oganesson.jar",
           "url": "gregtech-2.9.0-oganesson.jar",
-          "size": 13878267,
-          "sha512": "63ebb5f1ff061a27d8548b4dd512feba9c898c1da4eae3b0ac0418c0c203a3efffdd5c34dfbbea50fb8b1a5414ef154001e67a1c8b37dda8ae6a927224c654bb",
-          "sha256": "2dcfa285dc1578d20a5c9bc7a440fd901f7bdd1ae66820ab6cdba09dc0e8e360",
-          "sha1": "451f03b69028bb4e71ab52fc1a807b5234d66267",
-          "md5": "d62506bfe1a6f9d45125b3c85fa7d277"
+          "size": 13866617,
+          "sha512": "5637e6adc43d448e76c4a1b3b7313e5d9ba026a79893e8089c9e096332083e39a6b8e69d5498534414a824934af3b801b275200412e8afdff7c1b108c92b6d26",
+          "sha256": "150f192721bc4731b8273ab142e406d23fb4d6852ea4fec5753461d521d97acb",
+          "sha1": "2da9c249086e0e036d86533ac2029a71a5da9c99",
+          "md5": "d4b4315a9a827852f5d98412c1797db4"
         }
       ]
     },
@@ -277,11 +277,11 @@
         {
           "name": "gregtech-2.9.0-oganesson-sources.jar",
           "url": "gregtech-2.9.0-oganesson-sources.jar",
-          "size": 11211199,
-          "sha512": "1fc544144349c70c0c65c900aa9c0d831836870eb541bfa19e7c2eb5cb04274630b5d69a3401518c97b83863401117b83a55ef07aa491348153e9cb29e3bd517",
-          "sha256": "c428fd95822a10330ce992b71a3883107f5430e2573358109c3ec6e066a6abe2",
-          "sha1": "baa681d1c8ecc43349382bf0b3da3695bb0f5af6",
-          "md5": "39e32458e3829657c5d408c66edb5beb"
+          "size": 11210937,
+          "sha512": "266908d5c2bf152ffa19906e6333b0b63b5b86fe3afe66cfda9dfbfeae5aa16107f6b4a75f709a561556b0bed8b7781d4b5639ba84075ade30f9b567357125a8",
+          "sha256": "cdd1fb3acdb1a2703494c4b1706815180dca07f52ca233dac7bcf05da284cb5b",
+          "sha1": "f2496ddd80834c2f8630a7bd1c31d1d20cd4845c",
+          "md5": "b3e82a976b77c1a662993063e53232cb"
         }
       ]
     }
